@@ -55,8 +55,10 @@ interface Contributors: CoroutineScope {
         val startTime = System.currentTimeMillis()
         when (getSelectedVariant()) {
             BLOCKING -> { // Blocking UI thread
-                val users = loadContributorsBlocking(service, req)
-                updateResults(users, startTime)
+//                val users = loadContributorsBlocking(service, req)
+//                println("users")
+//                println(users)
+//                updateResults(users, startTime)
             }
             BACKGROUND -> { // Blocking a background thread
                 loadContributorsBackground(service, req) { users ->
@@ -75,14 +77,24 @@ interface Contributors: CoroutineScope {
             SUSPEND -> { // Using coroutines
                 launch {
                     val users = loadContributorsSuspend(service, req)
+                    println("users : $users")
                     updateResults(users, startTime)
                 }.setUpCancellation()
+//
+//                launch {
+//                    for(i in 0..100){
+//                        delay(250)
+//                        println(i)
+//                    }
+//                }
             }
             CONCURRENT -> { // Performing requests concurrently
                 launch {
                     val users = loadContributorsConcurrent(service, req)
+                    println("in launch : $users")
                     updateResults(users, startTime)
                 }.setUpCancellation()
+
             }
             NOT_CANCELLABLE -> { // Performing requests in a non-cancellable way
                 launch {

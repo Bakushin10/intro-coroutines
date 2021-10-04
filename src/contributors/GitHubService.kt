@@ -14,17 +14,35 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import java.util.Base64
 
+// original
+// for BLOCKING, CALLBACKS
+//interface GitHubService {
+//    @GET("orgs/{org}/repos?per_page=100")
+//    fun getOrgReposCall(
+//        @Path("org") org: String
+//    ): Call<List<Repo>>
+//
+//    @GET("repos/{owner}/{repo}/contributors?per_page=100")
+//    fun getRepoContributorsCall(
+//        @Path("owner") owner: String,
+//        @Path("repo") repo: String
+//    ): Call<List<User>>
+//}
+
+// suspend func
 interface GitHubService {
+    // getOrgReposCall & getRepoContributorsCall declarations
+
     @GET("orgs/{org}/repos?per_page=100")
-    fun getOrgReposCall(
+    suspend fun getOrgRepos(
         @Path("org") org: String
-    ): Call<List<Repo>>
+    ): Response<List<Repo>>
 
     @GET("repos/{owner}/{repo}/contributors?per_page=100")
-    fun getRepoContributorsCall(
+    suspend fun getRepoContributors(
         @Path("owner") owner: String,
         @Path("repo") repo: String
-    ): Call<List<User>>
+    ): Response<List<User>>
 }
 
 @Serializable
@@ -69,3 +87,4 @@ fun createGitHubService(username: String, password: String): GitHubService {
         .build()
     return retrofit.create(GitHubService::class.java)
 }
+
