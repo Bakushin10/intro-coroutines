@@ -89,12 +89,27 @@ interface Contributors: CoroutineScope {
 //                }
             }
             CONCURRENT -> { // Performing requests concurrently
-                launch {
-                    val users = loadContributorsConcurrent(service, req)
-                    println("in launch : $users")
-                    updateResults(users, startTime)
-                }.setUpCancellation()
+                /***
+                 *
+                 * 'Dispatchers.Default'
+                 * represents a shared pool of threads on JVM.
+                 * This pool provides a means for parallel execution.
+                 * It consists of as many threads as there are CPU cores available,
+                 * but still it has two threads if there's only one core.
+                 *
+                 *
+                 * Dispatchers.Main
+                 * To run the coroutine only on the main UI thread
+                 *
+                 */
 
+                launch(Dispatchers.Default) {
+                    val users = loadContributorsConcurrent(service, req)
+                    println("==== user $users")
+                    withContext(Dispatchers.Main) {
+                        updateResults(users, startTime)
+                    }
+                }.setUpCancellation()
             }
             NOT_CANCELLABLE -> { // Performing requests in a non-cancellable way
                 launch {
